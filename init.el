@@ -46,12 +46,13 @@
 ;;For El-Get
 
 (setq exec-path
-          (append  '("/usr/local/bin"
-                     "/Library/Frameworks/Python.framework/Versions/2.7/bin"
-                     "/opt/local/bin"
-                     "/opt/local/sbin"
-                     ) exec-path
-                       ))
+      (append  '("/usr/local/bin"
+                 "/Library/Frameworks/Python.framework/Versions/2.7/bin"
+                 "/opt/local/bin"
+                 "/opt/local/sbin"
+                 "/usr/local/share/python"
+                 ) exec-path
+                   ))
 
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
@@ -59,22 +60,27 @@
   (with-current-buffer
       (url-retrieve-synchronously
        "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
-    (goto-char (point-max))
-    (eval-print-last-sexp)))
+    (let (el-get-master-branch)
+      (goto-char (point-max))
+      (eval-print-last-sexp))))
 
-(el-get 'sync) ;;Should update currently installed packages
+(el-get 'sync)
 
 (setq el-get-user-package-directory "~/.emacs.d/el-get-init")
 
 ;;El-Get some stuff
 
-(defvar el-get-packages
+(setq el-get-packages
   '(haskell-mode
     doxymacs
     rainbow-mode
     buffer-move
     auto-complete
-    fill-column-indicator))
+    fill-column-indicator ;;Gives us fci-mode
+    yasnippet
+    pos-tip
+    python
+    ))
 
 (el-get 'sync el-get-packages)
 
@@ -111,6 +117,9 @@
 ;; Newline and indent everywhere
 (global-set-key (kbd "RET") 'newline-and-indent)
 
+;;Better buffer mode
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+
 ;; Scroll to end of window before error
 (setq scroll-error-top-bottom t)
 
@@ -135,4 +144,47 @@
 
 ;;Default fill to 80 columns
 (setq-default fill-column 80)
+
+(add-hook 'prog-mode-hook 'auto-fill-mode)
+(add-hook 'prog-mode-hook 'fci-mode)
+
+;;Watch for haskell mode inheriting from prog-mode
+;;Then we won't need to do this.
+(add-hook 'haskell-mode-hook 'auto-fill-mode)
+(add-hook 'haskell-mode-hook 'fci-mode)
+
+;;Have customize save changes to customize.el
+(setq custom-file "~/.emacs.d/customize.el")
+(load custom-file)
+
+(yas-global-mode 1)
+
+;;Auto complete stuff
+(require 'pos-tip)
+(require 'auto-complete-config)
+(ac-config-default)
+;;Needed for compatibility with flyspell
+(ac-flyspell-workaround)
+(setq ac-auto-start 3)
+(setq ac-auto-show-menu t)
+(setq ac-quick-help-delay .3)
+(ac-set-trigger-key "TAB")
+;; Make \C-n and \C-p work in autocompletion menu
+(setq ac-use-menu-map t)
+(define-key ac-menu-map "\C-n" 'ac-next)
+(define-key ac-menu-map "\C-p" 'ac-previous)
+;; Let's have snippets in the auto-complete dropdown
+(setq-default ac-sources '(ac-source-yasnippet
+                           ac-source-words-in-same-mode-buffers
+                           ac-source-functions
+                           ac-source-variables
+                           ac-source-symbols
+                           ac-source-features
+                           ac-source-abbrev
+                           ac-source-dictionary
+                           ac-source-filename))
+
+
+;;Flymake
+(add-hook 'find-file-hook 'flymake-find-file-hook)
 
