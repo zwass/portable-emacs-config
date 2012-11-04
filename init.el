@@ -22,7 +22,7 @@
 ;;give me back scroll and menu bars
 (defun replace-scroll-and-menu-bars ()
   "Replace the scroll and menu bars (if in windowed emacs)"
-  (if (window-system)
+  (when (window-system)
       (let ((width (frame-width)))
         (menu-bar-mode)
         (set-frame-width (selected-frame) (+ width 1))
@@ -64,26 +64,11 @@
       (goto-char (point-max))
       (eval-print-last-sexp))))
 
+(setq el-get-status-file "~/.emacs.d/el-get-status.el")
+
 (el-get 'sync)
 
 (setq el-get-user-package-directory "~/.emacs.d/el-get-init")
-
-;;El-Get some stuff
-
-(setq el-get-packages
-  '(haskell-mode
-    doxymacs
-    rainbow-mode
-    buffer-move
-    auto-complete
-    fill-column-indicator ;;Gives us fci-mode
-    yasnippet
-    pos-tip
-    python
-    ))
-
-(el-get 'sync el-get-packages)
-
 
 ;;Line numbers
 (global-linum-mode 1)
@@ -175,16 +160,63 @@
 (define-key ac-menu-map "\C-p" 'ac-previous)
 ;; Let's have snippets in the auto-complete dropdown
 (setq-default ac-sources '(ac-source-yasnippet
-                           ac-source-words-in-same-mode-buffers
-                           ac-source-functions
-                           ac-source-variables
-                           ac-source-symbols
-                           ac-source-features
                            ac-source-abbrev
-                           ac-source-dictionary
-                           ac-source-filename))
-
+                           ac-source-words-in-buffer
+                           ac-source-words-in-same-mode-buffers
+                           ac-source-files-in-current-dir
+                           ))
 
 ;;Flymake
 (add-hook 'find-file-hook 'flymake-find-file-hook)
 
+;;OPA
+(autoload 'opa-classic-mode "/Library/Application Support/Emacs/site-lisp/opa-mode/opa-mode.el" "Opa CLASSIC editing mode." t)
+(autoload 'opa-js-mode "/Library/Application Support/Emacs/site-lisp/opa-mode/opa-js-mode.el" "Opa JS editing mode." t)
+(add-to-list 'auto-mode-alist '("\.opa$" . opa-js-mode))
+(add-to-list 'auto-mode-alist '("\.js\.opa$" . opa-js-mode))
+(add-to-list 'auto-mode-alist '("\.classic\.opa$" . opa-classic-mode))
+
+(defun enable_flyspell ()
+    (ispell-change-dictionary "american")
+    (flyspell-prog-mode)
+    )
+
+;; Enable spell-checking on Opa comments and strings
+(add-hook 'opa-mode-hook 'enable_flyspell)
+
+(add-hook 'css-mode-hook 'rainbow-mode)
+
+;;Start with empty scratch
+(setq initial-scratch-message "")
+
+;;debug on error
+(setq debug-on-error t)
+
+;;Clipboard and kill ring integration
+(setq save-interprogram-paste-before-kill t)
+
+;;Python stuff
+
+;;Fix for Python hanging on Mac
+;;https://github.com/fgallina/python.el/issues/117
+;;Should make it into trunk python.el eventually
+
+(defun python-shell-send-and-show-buffer (&optional arg)
+  "Send the entire buffer to inferior Python process and show the Python buffer"
+  (interactive "P")
+  (if arg (python-shell-send-buffer arg) (python-shell-send-buffer))
+  (python-shell-show-shell)
+  )
+
+(defun python-shell-show-shell ()
+  "Show inferior Python process buffer."
+  (interactive)
+  (display-buffer (process-buffer (python-shell-get-or-create-process)) t))
+
+(defun python-custom-setup ()
+  "Setup Python mode how I like it"
+  (local-set-key "\C-c\C-c" 'python-shell-send-and-show-buffer))
+
+(setq python-pep8-command "/usr/local/share/python/pep8")
+
+(add-hook 'python-mode-hook 'python-custom-setup)
