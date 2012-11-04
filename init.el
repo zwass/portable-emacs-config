@@ -13,7 +13,7 @@
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
-  (when (not (package-installed-p p))
+  (unless (package-installed-p p)
     (package-install p)))
 
 ;;Remove annoying stuff from starter kit
@@ -43,17 +43,18 @@
 
 (load-theme 'zenburn t)
 
+;; Mac path stuff
+(when (memq window-system '(mac ns))
+  (progn
+    (message "Setting up Mac path")
+    (unless (package-installed-p 'exec-path-from-shell)
+      (package-install 'exec-path-from-shell))
+    (exec-path-from-shell-initialize))
+  )
+
+
+
 ;;For El-Get
-
-(setq exec-path
-      (append  '("/usr/local/bin"
-                 "/Library/Frameworks/Python.framework/Versions/2.7/bin"
-                 "/opt/local/bin"
-                 "/opt/local/sbin"
-                 "/usr/local/share/python"
-                 ) exec-path
-                   ))
-
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
 (unless (require 'el-get nil 'noerror)
@@ -194,9 +195,6 @@
 ;;Start with empty scratch
 (setq initial-scratch-message "")
 
-;;debug on error
-(setq debug-on-error t)
-
 ;;Clipboard and kill ring integration
 (setq save-interprogram-paste-before-kill t)
 
@@ -220,9 +218,26 @@
 
 (defun python-custom-setup ()
   "Setup Python mode how I like it"
-  (local-set-key "\C-c\C-c" 'python-shell-send-and-show-buffer))
+  (local-set-key "\C-c\C-c" 'python-shell-send-and-show-buffer)
+  
+  (when (load "flymake" t)
+    (defun flymake-pylint-init ()
+      (let* ((temp-file (flymake-init-create-temp-buffer-copy
+                         'flymake-create-temp-inplace))
+             (local-file (file-relative-name
+                          temp-file
+                          (file-name-directory buffer-file-name))))
+        (list "flake8" (list local-file))))
 
-(setq python-pep8-command "/usr/local/share/python/pep8")
+    (add-to-list 'flymake-allowed-file-name-masks
+                 '("\\.py\\'" flymake-pylint-init))
+    (local-unset-key "\M-g\M-n")
+    (local-unset-key "\M-g\M-p")
+    (local-set-key "\M-g\M-n" 'flymake-goto-next-error)
+    (local-set-key "\M-g\M-p" 'flymake-goto-prev-error)
+    (flymake-mode 1))
+  
+  )
 
 (add-hook 'python-mode-hook 'python-custom-setup)
 
