@@ -112,6 +112,10 @@
 (add-to-list 'ido-ubiquitous-command-exceptions 'man)
 (ido-ubiquitous-disable-in man)
 
+;;ignore .DS_Store in ido
+;; Ignore .DS_Store files with ido mode
+(add-to-list 'ido-ignore-files "\\.DS_Store")
+
 ;; Buffer movement by arrow keys
 (global-set-key (kbd "<C-S-up>")     'buf-move-up)
 (global-set-key (kbd "<C-S-down>")   'buf-move-down)
@@ -122,6 +126,7 @@
 (global-set-key (kbd "C-x g") 'magit-status)
 
 ;;Winner mode allows undoing window configuration changes
+;;Use C-c <left>/<right>
 (winner-mode 1)
 
 ;;Automatically revert file if it changed on disk and we have no unsaved changes
@@ -167,7 +172,7 @@
                            ))
 
 ;;Flymake
-(add-hook 'find-file-hook 'flymake-find-file-hook)
+;;(add-hook 'find-file-hook 'flymake-find-file-hook)
 
 ;;OPA
 (autoload 'opa-classic-mode "/Library/Application Support/Emacs/site-lisp/opa-mode/opa-mode.el" "Opa CLASSIC editing mode." t)
@@ -274,3 +279,21 @@ vi style of % jumping to matching brace."
           ((looking-at "\\s\)") (forward-char 1) (backward-list 1))
           (t (self-insert-command (or arg 1))))))
 (global-set-key (kbd "%") 'goto-match-paren)
+
+;;Pending delete allows you to overwrite whatever's in the region
+(add-hook 'prog-mode-hook 'delete-selection-mode)
+
+;;Get rid of quick text size changes
+(global-unset-key (kbd "C-+"))
+(global-unset-key (kbd "C--"))
+
+;;Immediately show the C- and M- stuff that's happening
+(setq echo-keystrokes 0.1)
+
+;;Subword mode for navigating camelCase words
+(global-subword-mode 1)
+
+;;For smooth-scrolling
+(setq smooth-scroll-margin 5)
+
+
