@@ -191,7 +191,8 @@
 (setq initial-scratch-message "")
 
 ;;Clipboard and kill ring integration
-(setq save-interprogram-paste-before-kill t)
+;;Currently seemst to break kill ring in certain circumstances (org-export)
+;;(setq save-interprogram-paste-before-kill t)
 
 ;;Python stuff
 
