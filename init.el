@@ -233,6 +233,8 @@
     (local-set-key "\M-g\M-p" 'flymake-goto-prev-error)
     (flymake-mode 1))
 
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+
   (local-set-key "\C-ch" 'pylookup-lookup)
   )
 
