@@ -236,7 +236,8 @@
     (local-set-key "\M-g\M-n" 'flymake-goto-next-error)
     (local-set-key "\M-g\M-p" 'flymake-goto-prev-error)
     (flymake-mode 1))
-  
+
+  (local-set-key "\C-ch" 'pylookup-lookup)
   )
 
 (add-hook 'python-mode-hook 'python-custom-setup)

@@ -60,6 +60,15 @@
         (:name popup :website "https://github.com/auto-complete/popup-el" :description "Visual Popup Interface Library for Emacs" :type github :pkgname "auto-complete/popup-el"))
  (pos-tip status "installed" recipe
           (:name pos-tip :description "Show tooltip at point" :type emacswiki))
+ (pylookup status "installed" recipe
+           (:name pylookup :description "Emacs mode for searching python documents with convenience" :type github :pkgname "tsgates/pylookup" :prepare
+                  (progn
+                    (setq pylookup-program
+                          (expand-file-name "pylookup.py")
+                          pylookup-db-file
+                          (expand-file-name "pylookup.db"))
+                    (autoload 'pylookup-lookup "pylookup" "Lookup SEARCH-TERM in the Python HTML indexes." t)
+                    (autoload 'pylookup-update "pylookup" "Run pylookup-update and create the database at `pylookup-db-file'." t))))
  (python status "installed" recipe
          (:name python :description "Python's flying circus support for Emacs" :type github :pkgname "fgallina/python.el"))
  (python-pep8 status "installed" recipe
