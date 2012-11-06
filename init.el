@@ -139,11 +139,6 @@
 (add-hook 'prog-mode-hook 'auto-fill-mode)
 (add-hook 'prog-mode-hook 'fci-mode)
 
-;;Watch for haskell mode inheriting from prog-mode
-;;Then we won't need to do this.
-(add-hook 'haskell-mode-hook 'auto-fill-mode)
-(add-hook 'haskell-mode-hook 'fci-mode)
-
 ;;Have customize save changes to customize.el
 (setq custom-file "~/.emacs.d/customize.el")
 (load custom-file)
@@ -312,4 +307,49 @@ vi style of % jumping to matching brace."
 ;;For smooth-scrolling
 (setq smooth-scroll-margin 5)
 
+;;Haskell setup
 
+(defun haskell-custom-setup ()
+  (progn
+    (define-key haskell-mode-map (kbd "C-x C-s") 'haskell-mode-save-buffer)
+    (setq haskell-indent-offset 2)
+    (ghc-init)
+    (flymake-mode 1)
+
+    (defun haskell-mode-stylish-buffer-custom ()
+      "Apply stylish-haskell to the current buffer."
+      (interactive)
+      (let ((column (current-column))
+            (line (line-number-at-pos))
+            (buffer (current-buffer))
+            (file (buffer-file-name))
+            (end (buffer-size)))
+        (save-buffer) ;;First save so we don't lose the changes
+        ;; (shell-command ;;Now run stylish with our custom config
+        ;;  (concat
+        ;;   "stylish-haskell -c ~/.emacs.d/stylish-haskell-config.yaml " file)
+        ;;  buffer
+        ;;  "*stylish_haskell_error*")
+        (mark-whole-buffer)
+        (haskell-indent-align-guards-and-rhs 0 end) ;;Align function stuff
+        ;; (goto-line line)
+        ;; (goto-char (+ column (point)))
+        ))
+    (defadvice haskell-mode-save-buffer (before
+                                         haskell-mode-stylish-before-save
+                                         activate)
+      (haskell-mode-stylish-buffer-custom))
+    ))
+(remove-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+(add-hook 'haskell-mode-hook 'haskell-custom-setup)
+;;(setq haskell-stylish-on-save t)
+
+;;Watch for haskell mode inheriting from prog-mode
+;;Then we won't need to do this.
+(add-hook 'haskell-mode-hook 'auto-fill-mode)
+(add-hook 'haskell-mode-hook 'fci-mode)
+
+
+(global-set-key "\C-xar" 'align-regexp)
