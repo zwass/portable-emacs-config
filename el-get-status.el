@@ -20,7 +20,15 @@
                   ("./bootstrap" "./configure" "make")
                   :features doxymacs))
  (el-get status "installed" recipe
-         (:name el-get :website "https://github.com/dimitri/el-get#readme" :description "Manage the external elisp bits and pieces you depend upon." :type github :branch "4.stable" :pkgname "dimitri/el-get" :features el-get :info "." :load "el-get.el"))
+         (:name el-get :website "https://github.com/dimitri/el-get#readme" :description "Manage the external elisp bits and pieces you depend upon." :type github :branch "4.stable" :pkgname "dimitri/el-get" :info "." :load "el-get.el"))
+ (emacs-w3m status "installed" recipe
+            (:name emacs-w3m :description "A simple Emacs interface to w3m" :type cvs :module "emacs-w3m" :url ":pserver:anonymous@cvs.namazu.org:/storage/cvsroot" :build
+                   `("autoconf"
+                     ("./configure" ,(concat "--with-emacs=" el-get-emacs))
+                     "make")
+                   :build/windows-nt
+                   ("sh /usr/bin/autoconf" "sh ./configure" "make")
+                   :info "doc"))
  (expand-region status "installed" recipe
                 (:name expand-region :type github :pkgname "magnars/expand-region.el" :description "Expand region increases the selected region by semantic units. Just keep pressing the key until it selects what you want." :website "https://github.com/magnars/expand-region.el#readme" :features expand-region))
  (fill-column-indicator status "installed" recipe
@@ -29,13 +37,24 @@
                  (:name flymake-cursor :auto-generated t :type emacswiki :description "displays flymake error msg in minibuffer after delay" :website "https://raw.github.com/emacsmirror/emacswiki.org/master/flymake-cursor.el"))
  (fuzzy status "installed" recipe
         (:name fuzzy :website "https://github.com/auto-complete/fuzzy-el" :description "Fuzzy matching utilities for GNU Emacs" :type github :pkgname "auto-complete/fuzzy-el"))
+ (gh status "installed" recipe
+     (:name gh :description "GitHub API library for Emacs" :type github :pkgname "sigma/gh.el" :depends
+            (pcache logito)))
  (ghc-mod status "installed" recipe
           (:name ghc-mod :description "Happy Haskell programming" :type github :pkgname "kazu-yamamoto/ghc-mod" :load-path "elisp"))
+ (gist status "installed" recipe
+       (:name gist :description "Emacs integration for gist.github.com" :type github :pkgname "defunkt/gist.el" :depends gh))
  (haskell-mode status "installed" recipe
                (:name haskell-mode :description "A Haskell editing mode" :type github :pkgname "haskell/haskell-mode" :load "haskell-site-file.el" :post-init
                       (progn
                         (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
                         (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation))))
+ (logito status "installed" recipe
+         (:name logito :description "tiny logging framework for Emacs" :type github :pkgname "sigma/logito"))
+ (mmm-mode status "installed" recipe
+           (:name mmm-mode :description "Allow Multiple Major Modes in a buffer" :type github :pkgname "purcell/mmm-mode"))
+ (org-impress-js status "installed" recipe
+                 (:name org-impress-js :description "impress.js export for Org-mode" :type github :pkgname "kinjo/org-impress-js.el" :features org-impress-js))
  (package status "installed" recipe
           (:name package :description "ELPA implementation (\"package.el\") from Emacs 24" :builtin 24 :type http :url "http://repo.or.cz/w/emacs.git/blob_plain/1a0a666f941c99882093d7bd08ced15033bc3f0c:/lisp/emacs-lisp/package.el" :shallow nil :features package :post-init
                  (progn
@@ -58,6 +77,8 @@
                            ("gnu" . "http://elpa.gnu.org/packages/")
                            ("marmalade" . "http://marmalade-repo.org/packages/")
                            ("SC" . "http://joseito.republika.pl/sunrise-commander/"))))))
+ (pcache status "installed" recipe
+         (:name pcache :description "persistent caching for Emacs" :type github :pkgname "sigma/pcache"))
  (popup status "installed" recipe
         (:name popup :website "https://github.com/auto-complete/popup-el" :description "Visual Popup Interface Library for Emacs" :type github :pkgname "auto-complete/popup-el"))
  (pos-tip status "installed" recipe
@@ -76,10 +97,19 @@
  (python-pep8 status "installed" recipe
               (:type github :pkgname "emacsmirror/python-pep8" :name python-pep8 :type emacsmirror :description "Minor mode for running `pep8'" :features python-pep8 :post-init
                      (require 'tramp)))
+ (rainbow-delimiters status "installed" recipe
+                     (:name rainbow-delimiters :website "https://github.com/jlr/rainbow-delimiters#readme" :description "Color nested parentheses, brackets, and braces according to their depth." :type github :pkgname "jlr/rainbow-delimiters"))
  (rainbow-mode status "installed" recipe
                (:name rainbow-mode :description "Colorize color names in buffers" :type elpa))
  (smooth-scrolling status "installed" recipe
                    (:name smooth-scrolling :description "Make emacs scroll smoothly, keeping the point away from the top and bottom of the current buffer's window in order to keep lines of context around the point visible as much as possible, whilst avoiding sudden scroll jumps which are visually confusing." :type http :url "http://adamspiers.org/computing/elisp/smooth-scrolling.el" :features smooth-scrolling))
+ (wrap-region status "installed" recipe
+              (:name wrap-region :description "Wrap text with punctation or tag" :type elpa :prepare
+                     (progn
+                       (autoload 'wrap-region-mode "wrap-region" nil t)
+                       (autoload 'turn-on-wrap-region-mode "wrap-region" nil t)
+                       (autoload 'turn-off-wrap-region-mode "wrap-region" nil t)
+                       (autoload 'wrap-region-global-mode "wrap-region" nil t))))
  (yasnippet status "installed" recipe
             (:name yasnippet :website "https://github.com/capitaomorte/yasnippet.git" :description "YASnippet is a template system for Emacs." :type github :pkgname "capitaomorte/yasnippet" :features "yasnippet" :pre-init
                    (unless

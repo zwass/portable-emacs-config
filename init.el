@@ -56,6 +56,7 @@
 
 ;;For El-Get
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+(setq el-get-user-package-directory "~/.emacs.d/el-get-init")
 
 (unless (require 'el-get nil 'noerror)
   (with-current-buffer
@@ -67,9 +68,10 @@
 
 (setq el-get-status-file "~/.emacs.d/el-get-status.el")
 
+(add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-custom-recipes/")
+
 (el-get 'sync)
 
-(setq el-get-user-package-directory "~/.emacs.d/el-get-init")
 
 ;;Line numbers
 (global-linum-mode 1)
@@ -215,7 +217,7 @@
 (defun python-custom-setup ()
   "Setup Python mode how I like it"
   (local-set-key "\C-c\C-c" 'python-shell-send-and-show-buffer)
-  
+
   (when (load "flymake" t)
     (defun flymake-pylint-init ()
       (let* ((temp-file (flymake-init-create-temp-buffer-copy
@@ -333,8 +335,8 @@ vi style of % jumping to matching brace."
         ;;   "stylish-haskell -c ~/.emacs.d/stylish-haskell-config.yaml " file)
         ;;  buffer
         ;;  "*stylish_haskell_error*")
-        (mark-whole-buffer)
-        (haskell-indent-align-guards-and-rhs 0 end) ;;Align function stuff
+        ;; (mark-whole-buffer)
+        ;; (haskell-indent-align-guards-and-rhs 0 end) ;;Align function stuff
         ;; (goto-line line)
         ;; (goto-char (+ column (point)))
         ))
@@ -353,6 +355,5 @@ vi style of % jumping to matching brace."
 ;;Then we won't need to do this.
 (add-hook 'haskell-mode-hook 'auto-fill-mode)
 (add-hook 'haskell-mode-hook 'fci-mode)
-
 
 (global-set-key "\C-xar" 'align-regexp)
