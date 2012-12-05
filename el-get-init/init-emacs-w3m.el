@@ -40,3 +40,6 @@
           (lambda (url)
             (let ((buffer-read-only nil))
               (delete-trailing-whitespace))))
+
+(define-key w3m-mode-map (kbd "<") 'w3m-previous-buffer)
+(define-key w3m-mode-map (kbd ">") 'w3m-next-buffer)
