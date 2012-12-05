@@ -113,10 +113,9 @@
 
 ;; Ido-ubiquitous broken in M-x man, disable it
 (add-to-list 'ido-ubiquitous-command-exceptions 'man)
-(ido-ubiquitous-disable-in man)
+(add-to-list 'ido-ubiquitous-command-exceptions 'w3m-goto-url)
 
 ;;ignore .DS_Store in ido
-;; Ignore .DS_Store files with ido mode
 (add-to-list 'ido-ignore-files "\\.DS_Store")
 
 ;; Buffer movement by arrow keys
