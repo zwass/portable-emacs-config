@@ -350,9 +350,4 @@ vi style of % jumping to matching brace."
 (add-hook 'haskell-mode-hook 'haskell-custom-setup)
 ;;(setq haskell-stylish-on-save t)
 
-;;Watch for haskell mode inheriting from prog-mode
-;;Then we won't need to do this.
-(add-hook 'haskell-mode-hook 'auto-fill-mode)
-(add-hook 'haskell-mode-hook 'fci-mode)
-
 (global-set-key "\C-xar" 'align-regexp)
