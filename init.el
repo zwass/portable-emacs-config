@@ -352,3 +352,10 @@ vi style of % jumping to matching brace."
 ;;(setq haskell-stylish-on-save t)
 
 (global-set-key "\C-xar" 'align-regexp)
+
+;; active Babel languages
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((python . t)
+   (emacs-lisp . t)
+   ))
