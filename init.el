@@ -315,39 +315,40 @@ vi style of % jumping to matching brace."
 
 (defun haskell-custom-setup ()
   (progn
-    (define-key haskell-mode-map (kbd "C-x C-s") 'haskell-mode-save-buffer)
+;;    (define-key haskell-mode-map (kbd "C-x C-s") 'haskell-mode-save-buffer)
     (setq haskell-indent-offset 2)
     (ghc-init)
     (flymake-mode 1)
 
-    (defun haskell-mode-stylish-buffer-custom ()
-      "Apply stylish-haskell to the current buffer."
-      (interactive)
-      (let ((column (current-column))
-            (line (line-number-at-pos))
-            (buffer (current-buffer))
-            (file (buffer-file-name))
-            (end (buffer-size)))
-        (save-buffer) ;;First save so we don't lose the changes
-        ;; (shell-command ;;Now run stylish with our custom config
-        ;;  (concat
-        ;;   "stylish-haskell -c ~/.emacs.d/stylish-haskell-config.yaml " file)
-        ;;  buffer
-        ;;  "*stylish_haskell_error*")
-        ;; (mark-whole-buffer)
-        ;; (haskell-indent-align-guards-and-rhs 0 end) ;;Align function stuff
-        ;; (goto-line line)
-        ;; (goto-char (+ column (point)))
-        ))
-    (defadvice haskell-mode-save-buffer (before
-                                         haskell-mode-stylish-before-save
-                                         activate)
-      (haskell-mode-stylish-buffer-custom))
+    ;; (defun haskell-mode-stylish-buffer-custom ()
+    ;;   "Apply stylish-haskell to the current buffer."
+    ;;   (interactive)
+    ;;   (let ((column (current-column))
+    ;;         (line (line-number-at-pos))
+    ;;         (buffer (current-buffer))
+    ;;         (file (buffer-file-name))
+    ;;         (end (buffer-size)))
+    ;;     (save-buffer) ;;First save so we don't lose the changes
+    ;;     ;; (shell-command ;;Now run stylish with our custom config
+    ;;     ;;  (concat
+    ;;     ;;   "stylish-haskell -c ~/.emacs.d/stylish-haskell-config.yaml " file)
+    ;;     ;;  buffer
+    ;;     ;;  "*stylish_haskell_error*")
+    ;;     ;; (mark-whole-buffer)
+    ;;     ;; (haskell-indent-align-guards-and-rhs 0 end) ;;Align function stuff
+    ;;     ;; (goto-line line)
+    ;;     ;; (goto-char (+ column (point)))
+    ;;     ))
+    ;; (defadvice haskell-mode-save-buffer (before
+    ;;                                      haskell-mode-stylish-before-save
+    ;;                                      activate)
+    ;;   (haskell-mode-stylish-buffer-custom))
     ))
-(remove-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
-(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+;;(remove-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+;;(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 (add-hook 'haskell-mode-hook 'haskell-custom-setup)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
 ;;(setq haskell-stylish-on-save t)
 
 (global-set-key "\C-xar" 'align-regexp)
