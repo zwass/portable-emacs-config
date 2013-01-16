@@ -49,7 +49,8 @@
     (message "Setting up Mac path")
     (unless (package-installed-p 'exec-path-from-shell)
       (package-install 'exec-path-from-shell))
-    (exec-path-from-shell-initialize))
+    (exec-path-from-shell-initialize)
+    (exec-path-from-shell-copy-env "CAML_LD_LIBRARY_PATH"))
   )
 
 
@@ -236,7 +237,12 @@
 
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
+  ;; pylookup documentation lookup
   (local-set-key "\C-ch" 'pylookup-lookup)
+
+  ;; Jedi autocompletion
+  (setq jedi:setup-keys t)
+  (add-hook 'python-mode-hook 'jedi:setup)
   )
 
 (add-hook 'python-mode-hook 'python-custom-setup)
@@ -359,3 +365,7 @@ vi style of % jumping to matching brace."
  '((python . t)
    (emacs-lisp . t)
    ))
+
+;; Ocaml utop (better REPL)
+(autoload 'utop-setup-ocaml-buffer "utop" "Toplevel for OCaml" t)
+(add-hook 'tuareg-mode-hook 'utop-setup-ocaml-buffer)

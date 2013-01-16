@@ -13,14 +13,24 @@
                        (popup fuzzy)))
  (buffer-move status "installed" recipe
               (:name buffer-move :description "Swap buffers without typing C-x b on each window" :type emacswiki :features buffer-move))
+ (clojure-mode status "installed" recipe
+               (:name clojure-mode :website "https://github.com/technomancy/clojure-mode" :description "Emacs support for the Clojure language." :type github :pkgname "technomancy/clojure-mode"))
+ (ctable status "installed" recipe
+         (:name ctable :description "Table Component for elisp" :type github :pkgname "kiwanami/emacs-ctable"))
+ (deferred status "installed" recipe
+   (:name deferred :description "Simple asynchronous functions for emacs lisp" :website "https://github.com/kiwanami/emacs-deferred" :type github :pkgname "kiwanami/emacs-deferred" :features "deferred"))
  (doxymacs status "installed" recipe
            (:name doxymacs :website "http://doxymacs.sourceforge.net/" :description "Doxymacs is Doxygen + {X}Emacs." :type git :url "git://doxymacs.git.sourceforge.net/gitroot/doxymacs/doxymacs" :load-path
                   ("./lisp")
                   :build
                   ("./bootstrap" "./configure" "make")
                   :features doxymacs))
- (el-get status "installed" recipe
-         (:name el-get :website "https://github.com/dimitri/el-get#readme" :description "Manage the external elisp bits and pieces you depend upon." :type github :branch "4.stable" :pkgname "dimitri/el-get" :info "." :load "el-get.el"))
+ (ein status "installed" recipe
+      (:name ein :description "IPython notebook client in Emacs" :type github :pkgname "tkf/emacs-ipython-notebook" :depends
+             (websocket auto-complete)
+             :load-path
+             ("lisp")
+             :submodule nil :features ein))
  (emacs-w3m status "installed" recipe
             (:name emacs-w3m :description "A simple Emacs interface to w3m" :type cvs :module "emacs-w3m" :url ":pserver:anonymous@cvs.namazu.org:/storage/cvsroot" :build
                    `("autoconf"
@@ -29,6 +39,9 @@
                    :build/windows-nt
                    ("sh /usr/bin/autoconf" "sh ./configure" "make")
                    :info "doc"))
+ (epc status "installed" recipe
+      (:name epc :description "An RPC stack for Emacs Lisp" :type github :pkgname "kiwanami/emacs-epc" :depends
+             (deferred ctable)))
  (expand-region status "installed" recipe
                 (:name expand-region :type github :pkgname "magnars/expand-region.el" :description "Expand region increases the selected region by semantic units. Just keep pressing the key until it selects what you want." :website "https://github.com/magnars/expand-region.el#readme" :features expand-region))
  (fill-column-indicator status "installed" recipe
@@ -38,8 +51,9 @@
  (fuzzy status "installed" recipe
         (:name fuzzy :website "https://github.com/auto-complete/fuzzy-el" :description "Fuzzy matching utilities for GNU Emacs" :type github :pkgname "auto-complete/fuzzy-el"))
  (gh status "installed" recipe
-     (:name gh :description "GitHub API library for Emacs" :type github :pkgname "sigma/gh.el" :depends
-            (pcache logito)))
+     (:name gh :type github :pkgname "sigma/gh.el" :depends
+            (pcache logito)
+            :description "Github API client libraries" :website "http://github.com/sigma/gh.el"))
  (ghc-mod status "installed" recipe
           (:name ghc-mod :description "Happy Haskell programming" :type github :pkgname "kazu-yamamoto/ghc-mod" :load-path "elisp"))
  (gist status "installed" recipe
@@ -49,10 +63,17 @@
                       (progn
                         (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
                         (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation))))
+ (jedi status "installed" recipe
+       (:name jedi :description "An awesome Python auto-completion for Emacs" :type github :pkgname "tkf/emacs-jedi" :build
+              (("make" "requirements"))
+              :depends
+              (epc auto-complete)))
  (logito status "installed" recipe
-         (:name logito :description "tiny logging framework for Emacs" :type github :pkgname "sigma/logito"))
+         (:name logito :type github :pkgname "sigma/logito" :description "logging library for Emacs" :website "http://github.com/sigma/logito"))
  (mmm-mode status "installed" recipe
            (:name mmm-mode :description "Allow Multiple Major Modes in a buffer" :type github :pkgname "purcell/mmm-mode"))
+ (nrepl status "installed" recipe
+        (:name nrepl :description "An Emacs client for nREPL, the Clojure networked REPL server." :type github :pkgname "kingtim/nrepl.el" :depends clojure-mode))
  (org-impress-js status "installed" recipe
                  (:name org-impress-js :description "impress.js export for Org-mode" :type github :pkgname "kinjo/org-impress-js.el" :features org-impress-js))
  (package status "installed" recipe
@@ -78,7 +99,7 @@
                            ("marmalade" . "http://marmalade-repo.org/packages/")
                            ("SC" . "http://joseito.republika.pl/sunrise-commander/"))))))
  (pcache status "installed" recipe
-         (:name pcache :description "persistent caching for Emacs" :type github :pkgname "sigma/pcache"))
+         (:name pcache :type github :pkgname "sigma/pcache" :description "persistent caching for Emacs" :website "http://github.com/sigma/pcache"))
  (popup status "installed" recipe
         (:name popup :website "https://github.com/auto-complete/popup-el" :description "Visual Popup Interface Library for Emacs" :type github :pkgname "auto-complete/popup-el"))
  (pos-tip status "installed" recipe
@@ -103,6 +124,27 @@
                (:name rainbow-mode :description "Colorize color names in buffers" :type elpa))
  (smooth-scrolling status "installed" recipe
                    (:name smooth-scrolling :description "Make emacs scroll smoothly, keeping the point away from the top and bottom of the current buffer's window in order to keep lines of context around the point visible as much as possible, whilst avoiding sudden scroll jumps which are visually confusing." :type http :url "http://adamspiers.org/computing/elisp/smooth-scrolling.el" :features smooth-scrolling))
+ (tabulated-list status "installed" recipe
+                 (:name tabulated-list :type github :pkgname "sigma/tabulated-list.el" :description "generic major mode for tabulated lists." :website "http://github.com/sigma/tabulated-list.el"))
+ (tuareg-mode status "installed" recipe
+              (:name tuareg-mode :type svn :url "svn://svn.forge.ocamlcore.org/svn/tuareg/trunk" :description "A  GOOD Emacs mode to edit Objective Caml code." :load-path
+                     (".")
+                     :prepare
+                     (progn
+                       (autoload 'tuareg-mode "tuareg" "Major mode for editing Caml code" t)
+                       (autoload 'camldebug "camldebug" "Run the Caml debugger" t)
+                       (dolist
+                           (ext
+                            '(".cmo" ".cmx" ".cma" ".cmxa" ".cmi"))
+                         (add-to-list 'completion-ignored-extensions ext))
+                       (add-to-list 'auto-mode-alist
+                                    '("\\.ml[iylp]?" . tuareg-mode)))))
+ (utop status "installed" recipe
+       (:name utop :description "Emacs integration with the utop Ocaml shell" :type http :url "https://raw.github.com/diml/utop/master/src/top/utop.el"))
+ (websocket status "installed" recipe
+            (:name websocket :description "A websocket implementation in elisp, for emacs." :type github :pkgname "ahyatt/emacs-websocket"))
+ (window-numbering status "installed" recipe
+                   (:name window-numbering :type http :website "http://nschum.de/src/emacs/window-numbering-mode/" :description "Assigns numbers to Emacs windows to allow easy window navigation" :url "http://nschum.de/src/emacs/window-numbering-mode/window-numbering.el"))
  (wrap-region status "installed" recipe
               (:name wrap-region :description "Wrap text with punctation or tag" :type elpa :prepare
                      (progn
