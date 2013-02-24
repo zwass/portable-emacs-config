@@ -126,6 +126,8 @@
                    (:name smooth-scrolling :description "Make emacs scroll smoothly, keeping the point away from the top and bottom of the current buffer's window in order to keep lines of context around the point visible as much as possible, whilst avoiding sudden scroll jumps which are visually confusing." :type http :url "http://adamspiers.org/computing/elisp/smooth-scrolling.el" :features smooth-scrolling))
  (tabulated-list status "installed" recipe
                  (:name tabulated-list :type github :pkgname "sigma/tabulated-list.el" :description "generic major mode for tabulated lists." :website "http://github.com/sigma/tabulated-list.el"))
+ (tuareg-imenu status "installed" recipe
+               (:name tuareg-imenu :description "Support for imenu with tuareg-mode" :type http :url "http://aspellfr.free.fr/tuareg-imenu/tuareg-imenu.el"))
  (tuareg-mode status "installed" recipe
               (:name tuareg-mode :type svn :url "svn://svn.forge.ocamlcore.org/svn/tuareg/trunk" :description "A  GOOD Emacs mode to edit Objective Caml code." :load-path
                      (".")

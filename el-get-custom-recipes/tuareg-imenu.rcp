@@ -1,0 +1,4 @@
+(:name tuareg-imenu
+       :description "Support for imenu with tuareg-mode"
+       :type http
+       :url "http://aspellfr.free.fr/tuareg-imenu/tuareg-imenu.el")
