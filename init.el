@@ -136,10 +136,16 @@
 (global-auto-revert-mode 1)
 
 ;;Default fill to 80 columns
-(setq-default fill-column 80)
+(setq-default fill-column 79)
+
+(defun delete-whitespace-before-save ()
+  "Used for prog mode to add a hook for deleting trailing whitespace on save"
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+)
 
 (add-hook 'prog-mode-hook 'auto-fill-mode)
 (add-hook 'prog-mode-hook 'fci-mode)
+(add-hook 'prog-mode-hook 'delete-whitespace-before-save)
 
 ;;Have customize save changes to customize.el
 (setq custom-file "~/.emacs.d/customize.el")
