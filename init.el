@@ -248,7 +248,7 @@
 
   ;; Jedi autocompletion
   (setq jedi:setup-keys t)
-  (add-hook 'python-mode-hook 'jedi:setup)
+  (jedi:setup)
   )
 
 (add-hook 'python-mode-hook 'python-custom-setup)
