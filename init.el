@@ -1,3 +1,9 @@
+(setq debug-on-error t)
+
+(add-to-list 'load-path user-emacs-directory)
+
+(require 'starter-kit-highlights)
+
 ;;For Starter Kit
 (require 'package)
 (add-to-list 'package-archives
@@ -8,8 +14,7 @@
   (package-refresh-contents))
 
 ;; Add in your own as you wish:
-(defvar my-packages '(starter-kit starter-kit-lisp starter-kit-bindings
-                      zenburn-theme)
+(defvar my-packages '(zenburn-theme)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
@@ -53,12 +58,10 @@
     (exec-path-from-shell-copy-env "CAML_LD_LIBRARY_PATH"))
   )
 
-
-
 ;;For El-Get
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 (setq el-get-user-package-directory "~/.emacs.d/el-get-init")
-
+(setq el-get-status-file "~/.emacs.d/el-get-status.el")
 (unless (require 'el-get nil 'noerror)
   (with-current-buffer
       (url-retrieve-synchronously
@@ -66,13 +69,46 @@
     (let (el-get-master-branch)
       (goto-char (point-max))
       (eval-print-last-sexp))))
-
-(setq el-get-status-file "~/.emacs.d/el-get-status.el")
-
 (add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-custom-recipes/")
-
 (el-get 'sync)
 
+;; Smex! (better M-x completion)
+(setq smex-save-file (concat user-emacs-directory ".smex-items"))
+(smex-initialize)
+(global-set-key (kbd "M-x") 'smex)
+
+;; Saveplace (Go back to the same place you were editing in the file)
+(require 'saveplace)
+(setq save-place t)
+
+;; Highlight matching parentheses when the point is on them.
+(show-paren-mode 1)
+
+;; ido-mode is like magic pixie dust!
+(ido-mode t)
+(ido-ubiquitous t)
+(setq ido-enable-prefix nil
+      ido-enable-flex-matching t
+      ido-auto-merge-work-directories-length nil
+      ido-create-new-buffer 'always
+      ido-use-filename-at-point 'guess
+      ido-use-virtual-buffers t
+      ido-handle-duplicate-virtual-buffers 2
+      ido-max-prospects 10)
+(require 'ffap)
+(defvar ffap-c-commment-regexp "^/\\*+"
+  "Matches an opening C-style comment, like \"/***\".")
+(defadvice ffap-file-at-point (after avoid-c-comments activate)
+  "Don't return paths like \"/******\" unless they actually exist.
+
+This fixes the bug where ido would try to suggest a C-style
+comment as a filename."
+  (ignore-errors
+    (when (and ad-return-value
+               (string-match-p ffap-c-commment-regexp
+                               ad-return-value)
+               (not (ffap-file-exists-string ad-return-value)))
+      (setq ad-return-value nil))))
 
 ;;Line numbers
 (global-linum-mode 1)
@@ -263,43 +299,44 @@
 vi style of % jumping to matching brace."
   (interactive "p")
   (message "%s" last-command)
-  (if (not (memq last-command '(
-                                set-mark
-                                cua-set-mark
-                                goto-match-paren
-                                down-list
-                                up-list
-                                end-of-defun
-                                beginning-of-defun
-                                backward-sexp
-                                forward-sexp
-                                backward-up-list
-                                forward-paragraph
-                                backward-paragraph
-                                end-of-buffer
-                                beginning-of-buffer
-                                backward-word
-                                forward-word
-                                mwheel-scroll
-                                backward-word
-                                forward-word
-                                mouse-start-secondary
-                                mouse-yank-secondary
-                                mouse-secondary-save-then-kill
-                                move-end-of-line
-                                move-beginning-of-line
-                                backward-char
-                                forward-char
-                                scroll-up
-                                scroll-down
-                                scroll-left
-                                scroll-right
-                                mouse-set-point
-                                next-buffer
-                                previous-buffer
-				previous-line
-				next-line
-                                )
+  (if (not (memq last-command
+                 '(
+                   set-mark
+                   cua-set-mark
+                   goto-match-paren
+                   down-list
+                   up-list
+                   end-of-defun
+                   beginning-of-defun
+                   backward-sexp
+                   forward-sexp
+                   backward-up-list
+                   forward-paragraph
+                   backward-paragraph
+                   end-of-buffer
+                   beginning-of-buffer
+                   backward-word
+                   forward-word
+                   mwheel-scroll
+                   backward-word
+                   forward-word
+                   mouse-start-secondary
+                   mouse-yank-secondary
+                   mouse-secondary-save-then-kill
+                   move-end-of-line
+                   move-beginning-of-line
+                   backward-char
+                   forward-char
+                   scroll-up
+                   scroll-down
+                   scroll-left
+                   scroll-right
+                   mouse-set-point
+                   next-buffer
+                   previous-buffer
+                   previous-line
+                   next-line
+                   )
                  ))
       (self-insert-command (or arg 1))
     (cond ((looking-at "\\s\(") (forward-list 1) (backward-char 1))
@@ -375,3 +412,14 @@ vi style of % jumping to matching brace."
 ;; Ocaml utop (better REPL)
 (autoload 'utop-setup-ocaml-buffer "utop" "Toplevel for OCaml" t)
 (add-hook 'tuareg-mode-hook 'utop-setup-ocaml-buffer)
+
+(defun join-next-line ()
+  "Joins the current line to the next line, eliminating the newline"
+  (interactive)
+  (save-excursion
+    (next-line)
+    (move-beginning-of-line nil)
+    (join-line)
+    )
+  )
+(define-key global-map (kbd "C-S-d") 'join-next-line)

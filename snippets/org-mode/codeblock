@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: codeblock
+# key: codeblock
+# --
+*** $1                                                 :B_block:
+    :PROPERTIES:
+    :BEAMER_env: block
+    :END:
+#+name: $2
+#+begin_src $3 :results output
+$4
+#+end_src
+$0
