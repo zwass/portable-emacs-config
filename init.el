@@ -258,7 +258,7 @@ comment as a filename."
 
 (defun python-custom-setup ()
   "Setup Python mode how I like it"
-  (local-set-key "\C-c\C-c" 'python-shell-send-and-show-buffer)
+  (local-set-key "\C-c\C-k" 'python-shell-send-and-show-buffer)
 
   (when (load "flymake" t)
     (defun flymake-pylint-init ()
@@ -423,3 +423,18 @@ vi style of % jumping to matching brace."
     )
   )
 (define-key global-map (kbd "C-S-d") 'join-next-line)
+
+(global-set-key (kbd "C-c C-k") 'compile)
+
+;;OAT
+(add-to-list 'auto-mode-alist '("\.oat$" . c++-mode))
+
+;; Better commenting
+(defun comment-uncomment-line-region (beg end)
+  "Comments/uncomments the current line, or the region (if active)"
+  (interactive "*r")
+  (if (use-region-p)
+      (comment-or-uncomment-region beg end)
+    (comment-or-uncomment-region (line-beginning-position) (line-end-position)))
+)
+(global-set-key (kbd "C-c C-c") 'comment-uncomment-line-region)
