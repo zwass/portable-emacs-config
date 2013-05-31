@@ -438,3 +438,12 @@ vi style of % jumping to matching brace."
     (comment-or-uncomment-region (line-beginning-position) (line-end-position)))
 )
 (global-set-key (kbd "C-c C-c") 'comment-uncomment-line-region)
+
+;; Automatically create new directory (with prompting)
+(defadvice find-file-noselect (before make-directory-maybe first (filename &optional nowarn rawfile wildcards) activate)
+  "Create parent directory if not exists while visiting file."
+  (unless (file-exists-p filename)
+    (let ((dir (file-name-directory filename)))
+      (unless (file-exists-p dir)
+        (when (y-or-n-p (format "Directory %s does not exist. Create it?" dir))
+          (make-directory dir))))))
